@@ -1,0 +1,12 @@
+name: Test cronjob
+
+on:
+  schedule:
+    # every 1 hour
+    - cron: '0 */1 * * *'
+
+jobs:
+  build:
+    runs-on: [ubuntu-18.04]
+    steps:
+    - run: echo "Hello"
