@@ -13,7 +13,7 @@ jobs:
     - name: Get release id
       env:
         TAG: ${{ github.ref }}
-      run: echo ::set-env name=GITHUB_UPLOAD_URL::$(curl -s https://api.github.com/repos/antoninbas/github-workflows-test/releases/tags/${TAG:10} | jq '.upload_url')
+      run: echo ::set-env name=GITHUB_UPLOAD_URL::$(curl -s https://api.github.com/repos/antoninbas/github-workflows-test/releases/tags/${TAG:10} | jq '.upload_url' | cut -c 2- | rev | cut -c 15- | rev)
     - name: Build project # This would actually build your project, using zip for an example artifact
       if: env.GITHUB_UPLOAD_URL != 'null'
       run: |
