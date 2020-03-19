@@ -14,6 +14,11 @@ jobs:
       env:
         TAG: ${{ github.ref }}
       run: echo ::set-env name=GITHUB_UPLOAD_URL::$(curl -s https://api.github.com/repos/vmware-tanzu/antrea/releases/tags/${TAG:10} | jq '.upload_url')
+    - name: Print info
+      run: |
+        echo $TAG
+        echo ${TAG:10}
+        echo $GITHUB_UPLOAD_URL
     - name: Skip if no associated release
       run: |
         if [ "$GITHUB_UPLOAD_URL" == "null" ]; then exit 0; fi
