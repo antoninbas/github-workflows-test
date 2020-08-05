@@ -1,0 +1,14 @@
+name: Check Python version
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  check:
+    name: Print version
+    runs-on: [ubuntu-18.04]
+    steps:
+      - run: |
+          python --version
