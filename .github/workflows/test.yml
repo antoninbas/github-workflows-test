@@ -1,26 +1,31 @@
-name: Build and push image
+name: Test dispatch
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
+      antrea-repository:
+        description: 'The Antrea repository to check-out'
+        required: false
+        default: ''
+      antrea-ref:
+        description: 'The Git ref to use when checking-out the Antrea repository'
+        required: false
+        default: ''
+      docker-tag:
+        description: 'Tag for built Docker image'
+        required: false
+        default: ''
 
 jobs:
-  build-windows:
-    runs-on: [windows-2019]
+  dispatch-test:
+    runs-on: [ubuntu-latest]
     steps:
-    - uses: actions/checkout@v2
-    - name: Push image
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        TAG: ${{ github.ref }}
-      run: |
-        export VERSION="${TAG:10}"
-        echo "$VERSION"
-        echo "${TAG:10}"
-        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        docker pull golang
-        docker tag golang antoninbas/test-go-windows:latest
-        docker push antoninbas/test-go-windows:latest
-      shell: bash
+    - name: Run tests on ARM images
+      if: ${{ env.DOCKER_TAG != 'latest' }}
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        repo: vmware-tanzu/antrea-build-infra
+        ref: refs/heads/main
+        workflow: Build Antrea ARM images and push manifest
+        token: ${{ secrets.WORKFLOW_DISPATCH_PAT }}
+        inputs: ${{ toJSON(github.event.inputs) }}
