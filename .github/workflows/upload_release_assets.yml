@@ -6,27 +6,28 @@ on:
       - created
 
 jobs:
-  build:
-    runs-on: [ubuntu-18.04]
+  get-version:
+    runs-on: [ubuntu-latest]
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Build project # This would actually build your project, using zip for an example artifact
-      run: |
-        sleep 600
-        dd if=/dev/zero of=test.bin bs=1024 count=0 seek=$[1024*50]
-        ls -l
-    - name: Upload Release Asset
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./test.bin
-        asset_name: test.bin
-        asset_content_type: application/octet-stream
-    - name: Test
+    - name: Extract version from Github ref
+      id: get-version
       env:
         TAG: ${{ github.ref }}
       run: |
-        echo $TAG
+        version=${TAG:10}
+        echo "::set-output name=version::$version"
+
+  build:
+    runs-on: [ubuntu-latest]
+    needs: get-version
+    steps:
+    - name: Trigger Antrea arm builds and multi-arch manifest update
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        repo: vmware-tanzu/antrea-build-infra
+        ref: refs/heads/main
+        workflow: Build Antrea ARM images and push manifest
+        token: "aaaaaa"
+        inputs: ${{ format('{{ "antrea-repository":"vmware-tanzu/antrea", "antrea-ref":"{0}", "docker-tag":"{1}" }}', github.ref, needs.get-version.outputs.version) }}
