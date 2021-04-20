@@ -18,7 +18,7 @@ jobs:
       shell: bash
       run: |
         version=${TAG:10}
-        if [[ "$version" =~ *-* ]]; then
+        if [[ "$version" == *-* ]]; then
           echo "$version is a release candidate or a pre-release"
           exit 0
         fi
