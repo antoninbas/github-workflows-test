@@ -40,7 +40,7 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          commit_hash=$(git log --format="%H" --grep="Update CHANGELOG for $VERSION release")
+          commit_hash=$(git log "$VERSION" --format="%H" --grep="Update CHANGELOG for $VERSION release")
           if [[ -z "$commit_hash" ]]; then exit 1; fi
           git cherry-pick "$commit_hash"
       - name: Create Pull Request
