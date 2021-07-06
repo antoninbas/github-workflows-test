@@ -22,6 +22,6 @@ jobs:
           github.git.createRef({
           owner: context.repo.owner,
           repo: context.repo.repo,
-          ref: "refs/tag/${env.version}",
+          ref: "refs/tag/v0.99.1",
           sha: context.sha
           })
