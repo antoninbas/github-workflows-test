@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'VERSION'
+
+jobs:
+  release:
+    runs-on: [ubuntu-latest]
+    steps:
+    - name: Check-out code
+      uses: actions/checkout@v2
+    - name: Read version
+      run: |
+        echo "version=$(head VERSION)" >> $GITHUB_ENV
+    - name: Create tag
+      uses: actions/github-script@v4
+      with:
+        github-token: ${{ github.token }}
+        script: |
+          github.git.createRef({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          ref: "refs/tag/${env.version}",
+          sha: context.sha
+          })
