@@ -1,0 +1,14 @@
+name: Clean checkout
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+    - uses: actions/checkout@v3
+    - run: |
+        test -n "`git status --porcelain --untracked-files=no`" && echo "dirty" || echo "clean"
