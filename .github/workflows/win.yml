@@ -1,0 +1,23 @@
+name: Windows
+on:
+  pull_request:
+    branches:
+    - master
+  push:
+    branches:
+    - maser
+
+
+jobs:
+  test:
+    name: Check compiler
+    runs-on: [windows-2019, windows-2022]
+    steps:
+      - name: Check-out code
+        uses: actions/checkout@v3
+      - name: Add clang path to $PATH env
+        shell: bash
+        run: echo "PATH=$PATH:C:\msys64\mingw64\bin" >> $GITHUB_ENV
+      - name: Run compiler
+        shell: bash
+        run: clang --print-file-name libsynchronization.a
