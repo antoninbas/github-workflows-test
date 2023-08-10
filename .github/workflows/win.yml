@@ -25,9 +25,9 @@ jobs:
       - name: Print go env
         shell: bash
         run: go env
-      - name: Add clang path to $PATH env
-        shell: bash
-        run: echo "PATH=$PATH:C:\msys64\mingw64\bin" >> $GITHUB_ENV
+      # - name: Add clang path to $PATH env
+      #   shell: bash
+      #   run: echo "PATH=$PATH:C:\msys64\mingw64\bin" >> $GITHUB_ENV
       - name: Run compiler
         shell: bash
-        run: clang --print-file-name libsynchronization.a
+        run: gcc --print-file-name libsynchronization.a
