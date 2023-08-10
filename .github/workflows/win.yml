@@ -11,7 +11,10 @@ on:
 jobs:
   test:
     name: Check compiler
-    runs-on: [windows-2019, windows-2022]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2019, windows-2022]
     steps:
       - name: Check-out code
         uses: actions/checkout@v3
