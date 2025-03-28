@@ -1,0 +1,10 @@
+name: My Beautiful Workflow
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    steps:
+      - name: Test
+        run: "exit 0"
