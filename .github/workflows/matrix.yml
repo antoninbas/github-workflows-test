@@ -1,0 +1,42 @@
+name: TestMatrix
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check-env:
+    name: Compute outputs for use by other jobs
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        show-progress: false
+    - name: Check whether tests need to be run based on diff
+      uses: antrea-io/has-changes@v2
+      id: check_diff
+      with:
+        paths-ignore: docs/* ci/jenkins/* *.md hack/.notableofcontents
+    outputs:
+      has_changes: ${{ steps.check_diff.outputs.has_changes }}
+
+  test:
+    needs: check-env
+    if: ${{ needs.check-env.outputs.has_changes == 'yes' || github.event_name == 'push' }}
+    strategy:
+      matrix:
+        include:
+        - run: 1
+          runner: ubuntu-latest
+        - run: 2
+          runner: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Echo
+        run: |
+          echo "Run: ${{ matrix.run }}"
