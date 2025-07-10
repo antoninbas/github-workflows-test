@@ -43,18 +43,13 @@ jobs:
 
   test-status:
     needs: test
-    if: ${{ always() }}
+    if: ${{ always() && needs.test.result != 'skipped' }}
     runs-on: ubuntu-latest
     steps:
       - name: Success
         if: ${{ needs.test.result == 'success' }}
         run: |
           echo "Test was a success"
-          exit 0
-      - name: Skipped
-        if: ${{ needs.test.result == 'skipped' }}
-        run: |
-          echo "Test was skipped"
           exit 0
       - name: Cancelled
         if: ${{ needs.test.result == 'cancelled' }}
